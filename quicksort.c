@@ -7,8 +7,8 @@
 
 //defines
 #define CUTOFF 5
-#define QUEUE_SIZE 10
-#define N 30
+#define QUEUE_SIZE 50000
+#define N 100000
 #define THREADS 4
 #define WORK 0
 #define FINISH 1
@@ -85,16 +85,15 @@ void inssort(double *a,int b,int e){
 void quicksort(double *a,int b,int e){
     
     if ((e-b)<=CUTOFF){
-        send(FINISH,0,0);
+        
         inssort(a,b,e);
+        send(FINISH,b,e);
         return;
         
     }
     int first = b;
-    int last = e;
-    int middle = ((e-b)/2)+b;
-    int n = e-b;
-    printf("%d\n",n);
+    int last = e-1;
+    int middle = (e+b)/2;
     int i,j;
     double temp = 0;
     
@@ -115,7 +114,7 @@ void quicksort(double *a,int b,int e){
     }
     double pivot =  a[middle];
 
-    for (i=1,j=n-2;;i++,j--){
+    for (i=b+1,j=e-2;;i++,j--){
         while (a[i]<pivot){
             i++;
         }
@@ -132,7 +131,7 @@ void quicksort(double *a,int b,int e){
     } 
 
     send(WORK,b,i);
-    send(WORK,i+1,e);
+    send(WORK,i,e);
     
         
     
@@ -176,6 +175,10 @@ void *thread_func(void *params){
             send(SHUTDOWN,0,0);
             break;
         }
+        else if(t == FINISH){
+            printf("Finish\n");
+            send(FINISH,b,e);
+        }
         printf("type  %d,begin %d,end %d\n",t,b,e);
         
     }
@@ -212,23 +215,28 @@ int main() {
     }
 
 
-    send(WORK,0,N/2);
-    send(WORK,(N/2)+1,N);
+    send(WORK,0,N);
     int type,begin,end;
     
-    while (completed < (QUEUE_SIZE/2)){
+    while (completed < N){
         receive(&type,&begin,&end);
         if (type == FINISH){
-            completed++;
+
+            completed += end - begin;
+            printf("%d\n",completed);
         }
         else {
             send(type,begin,end);
         }
     }
-    for (int i = 0 ;i<N;i++ ){
+    int ok = 0 ;
+    for (int i = 0 ;i<N-1;i++ ){
+        if (a[i]>a[i+1]){
+            ok = 1;
+        }
         printf("%f\n",a[i]);
     }
-    
+    printf("%d\n",ok);
     send(SHUTDOWN,0,0);
     
      printf("Destoying my threads\n");
