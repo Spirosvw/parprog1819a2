@@ -7,9 +7,9 @@
 
 //defines
 #define CUTOFF 5//Below this threshold the program uses the function inssort to sort the partition of the array
-#define N 50000// the size of the message array
-#define ARRAY_SIZE 100000// the size of the array to be sorted
-#define THREADS 4//the number of the threads to be used
+#define N 100000// the size of the message array
+#define ARRAY_SIZE 500000// the size of the array to be sorted
+#define THREADS 8//the number of the threads to be used
 #define WORK 0// This is a message type. This implements that the thread must either split the array partition into two new partitions or it must use inssort to sort the partition
 #define FINISH 1// This is a message type. This implements that this partition of the array is sorted 
 #define SHUTDOWN 2// This is a message type. This implements that the array is sorted successfully and the program can close
