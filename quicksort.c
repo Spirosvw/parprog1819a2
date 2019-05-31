@@ -279,7 +279,8 @@ int main() {
      pthread_mutex_destroy(&mutex);//destroys mutex
      pthread_cond_destroy(&msg_in);//destroys msg_in
      pthread_cond_destroy(&msg_out);//destroys msg_out
-
+    
+    free(a);
 
 
     return 0;
